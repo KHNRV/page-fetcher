@@ -23,24 +23,17 @@ const saveToLocal = (destination, data) => {
   // Write the file
   fs.writeFile(destination, data, (err) => {
     if (err) throw err;
-    // Open the file
-    fs.open(destination, (err, fd) => {
+    fs.stat(destination, (err, stats) => {
       if (err) throw err;
-      // Read the file to get size
-      fs.read(fd, (err, bytesREad) => {
-        if (err) throw err;
-        // Print that the file got downloaded and saved with size in bytes
-        console.log(
-          `Downloaded and saved ${bytesREad} bytes to ${destination}`
-        );
-      });
+      const size = stats.size;
+      console.log(`Downloaded and saved ${size} bytes to ${destination}`);
     });
   });
 };
 
 // Get the file from URL
 request(urlToFetch, (error, response, body) => {
-  if (parseInt(response) !== 200) {
+  if (parseInt(response.statusCode) !== 200) {
     console.log("The URL is not valid or the page does not exist.");
     process.exit(1);
   }
